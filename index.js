@@ -4,6 +4,7 @@ const color = require('color');
 const afterAll = require('after-all-results');
 const tildify = require('tildify');
 const fs = require('fs');
+const net = require('net');
 
 var log = (msg) => {
     fs.appendFileSync("C:/Users/bebroder/hyper.debug", msg + "\n");
@@ -106,17 +107,17 @@ exports.decorateConfig = (config) => {
                 font-size: 10.5px;
                 font-weight: 500;
             }
-            .footer_footer .item_cwd {
+            .footer_footer .item_left_slot {
                 padding-left: 21px;
             }
-            .footer_footer .item_cwd:before {
+            .footer_footer .item_left_slot:before {
                 -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDE0IDEyIj48cGF0aCBmaWxsPSIjMDAwMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMywyIEw3LDIgTDcsMSBDNywwLjM0IDYuNjksMCA2LDAgTDEsMCBDMC40NSwwIDAsMC40NSAwLDEgTDAsMTEgQzAsMTEuNTUgMC40NSwxMiAxLDEyIEwxMywxMiBDMTMuNTUsMTIgMTQsMTEuNTUgMTQsMTEgTDE0LDMgQzE0LDIuNDUgMTMuNTUsMiAxMywyIEwxMywyIFogTTYsMiBMMSwyIEwxLDEgTDYsMSBMNiwyIEw2LDIgWiIvPjwvc3ZnPg==');
                 -webkit-mask-size: 14px 12px;
             }
-            .footer_footer .item_branch {
+            .footer_footer .item_right_slot {
                 padding-left: 16px;
             }
-            .footer_footer .item_branch:before {
+            .footer_footer .item_right_slot:before {
                 -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5IiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgOSAxMiI+PHBhdGggZmlsbD0iIzAwMDAwMCIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNOSwzLjQyODU3NzQ2IEM5LDIuNDc3MTQ4ODggOC4xOTksMS43MTQyOTE3NCA3LjIsMS43MTQyOTE3NCBDNi4zODY5NDE5NCwxLjcxMjI0NTc4IDUuNjc0MTI3NDksMi4yMzEzMDI2NCA1LjQ2MzA1NjAyLDIuOTc5MDk4NzEgQzUuMjUxOTg0NTQsMy43MjY4OTQ3OCA1LjU5NTQ1MzE3LDQuNTE2Mzc3NDEgNi4zLDQuOTAyODYzMTcgTDYuMyw1LjE2MDAwNjAzIEM2LjI4Miw1LjYwNTcyMDMxIDYuMDkzLDYuMDAwMDA2MDMgNS43MzMsNi4zNDI4NjMxNyBDNS4zNzMsNi42ODU3MjAzMSA0Ljk1OSw2Ljg2NTcyMDMxIDQuNDkxLDYuODgyODYzMTcgQzMuNzQ0LDYuOTAwMDA2MDMgMy4xNTksNy4wMjAwMDYwMyAyLjY5MSw3LjI2ODU3NzQ2IEwyLjY5MSwzLjE4ODU3NzQ2IEMzLjM5NTU0NjgzLDIuODAyMDkxNyAzLjczOTAxNTQ2LDIuMDEyNjA5MDcgMy41Mjc5NDM5OCwxLjI2NDgxMjk5IEMzLjMxNjg3MjUxLDAuNTE3MDE2OTIzIDIuNjA0MDU4MDYsLTAuMDAyMDM5OTM0MTUgMS43OTEsNi4wMjY4NzM4NWUtMDYgQzAuNzkyLDYuMDI2ODczODVlLTA2IDkuOTkyMDA3MjJlLTE3LDAuNzYyODYzMTcgOS45OTIwMDcyMmUtMTcsMS43MTQyOTE3NCBDMC4wMDM4NTgyMzAyNiwyLjMyMzA1MzU2IDAuMzQ2NDE5ODM1LDIuODg0MjAyMDkgMC45LDMuMTg4NTc3NDYgTDAuOSw4LjgxMTQzNDYgQzAuMzY5LDkuMTExNDM0NiAwLDkuNjYwMDA2MDMgMCwxMC4yODU3MjAzIEMwLDExLjIzNzE0ODkgMC44MDEsMTIuMDAwMDA2IDEuOCwxMi4wMDAwMDYgQzIuNzk5LDEyLjAwMDAwNiAzLjYsMTEuMjM3MTQ4OSAzLjYsMTAuMjg1NzIwMyBDMy42LDkuODMxNDM0NiAzLjQyLDkuNDI4NTc3NDYgMy4xMjMsOS4xMjAwMDYwMyBDMy4yMDQsOS4wNjg1Nzc0NiAzLjU1NSw4Ljc2ODU3NzQ2IDMuNjU0LDguNzE3MTQ4ODggQzMuODc5LDguNjIyODYzMTcgNC4xNTgsOC41NzE0MzQ2IDQuNSw4LjU3MTQzNDYgQzUuNDQ1LDguNTI4NTc3NDYgNi4yNTUsOC4xODU3MjAzMSA2Ljk3NSw3LjUwMDAwNjAzIEM3LjY5NSw2LjgxNDI5MTc0IDguMDU1LDUuODAyODYzMTcgOC4xLDQuOTExNDM0NiBMOC4wODIsNC45MTE0MzQ2IEM4LjYzMSw0LjYwMjg2MzE3IDksNC4wNTQyOTE3NCA5LDMuNDI4NTc3NDYgTDksMy40Mjg1Nzc0NiBaIE0xLjgsMC42ODU3MjAzMTMgQzIuMzk0LDAuNjg1NzIwMzEzIDIuODgsMS4xNTcxNDg4OCAyLjg4LDEuNzE0MjkxNzQgQzIuODgsMi4yNzE0MzQ2IDIuMzg1LDIuNzQyODYzMTcgMS44LDIuNzQyODYzMTcgQzEuMjE1LDIuNzQyODYzMTcgMC43MiwyLjI3MTQzNDYgMC43MiwxLjcxNDI5MTc0IEMwLjcyLDEuMTU3MTQ4ODggMS4yMTUsMC42ODU3MjAzMTMgMS44LDAuNjg1NzIwMzEzIEwxLjgsMC42ODU3MjAzMTMgWiBNMS44LDExLjMyMjg2MzIgQzEuMjA2LDExLjMyMjg2MzIgMC43MiwxMC44NTE0MzQ2IDAuNzIsMTAuMjk0MjkxNyBDMC43Miw5LjczNzE0ODg4IDEuMjE1LDkuMjY1NzIwMzEgMS44LDkuMjY1NzIwMzEgQzIuMzg1LDkuMjY1NzIwMzEgMi44OCw5LjczNzE0ODg4IDIuODgsMTAuMjk0MjkxNyBDMi44OCwxMC44NTE0MzQ2IDIuMzg1LDExLjMyMjg2MzIgMS44LDExLjMyMjg2MzIgTDEuOCwxMS4zMjI4NjMyIFogTTcuMiw0LjQ2NTcyMDMxIEM2LjYwNiw0LjQ2NTcyMDMxIDYuMTIsMy45OTQyOTE3NCA2LjEyLDMuNDM3MTQ4ODggQzYuMTIsMi44ODAwMDYwMyA2LjYxNSwyLjQwODU3NzQ2IDcuMiwyLjQwODU3NzQ2IEM3Ljc4NSwyLjQwODU3NzQ2IDguMjgsMi44ODAwMDYwMyA4LjI4LDMuNDM3MTQ4ODggQzguMjgsMy45OTQyOTE3NCA3Ljc4NSw0LjQ2NTcyMDMxIDcuMiw0LjQ2NTcyMDMxIEw3LjIsNC40NjU3MjAzMSBaIi8+PC9zdmc+');
                 -webkit-mask-size: 9px 12px;
             }
@@ -147,12 +148,28 @@ exports.decorateConfig = (config) => {
 
 let pid;
 let cwd;
+let left_slot;
+let right_slot;
 let git = {
-    branch: '',
+    //branch: '',
     remote: '',
     dirty: 0,
     ahead: 0
 }
+
+var server = net.createServer(function(socket) {
+    socket.on('data', function (data) {
+        var split = data.toString().split(';');
+        left_slot = split[0] || '';
+        right_slot = split[1] || '';
+        log(data.toString() + " " + left_slot + " " + right_slot);
+        //console.log(data.toString());
+    });
+});
+
+log('Server listening at 127.0.0.1:7654');
+server.listen(7654, '127.0.0.1');
+
 
 const setCwd = (pid, action) => {
     fs.readFile('C:/Users/bebroder/.psmeta', (err, data) => {
@@ -258,24 +275,26 @@ exports.decorateHyper = (Hyper, { React }) => {
             super(props);
 
             this.state = {
-                cwd: '',
-                branch: '',
+                left_slot: '',
+                right_slot: '',
                 remote: '',
                 dirty: 0,
                 ahead: 0
             }
 
-            this.handleCwdClick = this.handleCwdClick.bind(this);
-            this.handleBranchClick = this.handleBranchClick.bind(this);
+            //this.handleCwdClick = this.handleCwdClick.bind(this);
+            //this.handleBranchClick = this.handleBranchClick.bind(this);
         }
 
+        /*
         handleCwdClick(event) {
-            shell.openExternal('file://'+this.state.cwd);
+            shell.openExternal('file://'+this.state.left_slot);
         }
 
         handleBranchClick(event) {
             shell.openExternal(this.state.remote);
         }
+        */
 
         render() {
             const { customChildren } = this.props
@@ -286,12 +305,12 @@ exports.decorateHyper = (Hyper, { React }) => {
                     customInnerChildren: existingChildren.concat(React.createElement('footer', { className: 'footer_footer' },
                         React.createElement('div', { className: 'footer_group group_overflow' },
                             React.createElement('div', { className: 'component_component component_cwd' },
-                                React.createElement('div', { className: 'component_item item_icon item_cwd item_clickable', title: this.state.cwd, onClick: this.handleCwdClick, hidden: !this.state.cwd }, this.state.cwd ? tildify(String(this.state.cwd)) : '')
+                                React.createElement('div', { className: 'component_item item_icon item_left_slot item_clickable', title: this.state.left_slot, onClick: this.handleCwdClick, hidden: !this.state.left_slot }, this.state.left_slot ? tildify(String(this.state.left_slot)) : '')
                             )
                         ),
                         React.createElement('div', { className: 'footer_group' },
                             React.createElement('div', { className: 'component_component component_git' },
-                                React.createElement('div', { className: `component_item item_icon item_branch ${this.state.remote ? 'item_clickable' : ''}`, title: this.state.remote, onClick: this.handleBranchClick, hidden: !this.state.branch }, this.state.branch),
+                                React.createElement('div', { className: `component_item item_icon item_right_slot ${this.state.remote ? 'item_clickable' : ''}`, title: this.state.remote, onClick: this.handleBranchClick, hidden: !this.state.right_slot }, this.state.right_slot),
                                 React.createElement('div', { className: 'component_item item_icon item_number item_dirty', title: `${this.state.dirty} dirty ${this.state.dirty > 1 ? 'files' : 'file'}`, hidden: !this.state.dirty }, this.state.dirty),
                                 React.createElement('div', { className: 'component_item item_icon item_number item_ahead', title: `${this.state.ahead} ${this.state.ahead > 1 ? 'commits' : 'commit'} ahead`, hidden: !this.state.ahead }, this.state.ahead)
                             )
@@ -304,8 +323,8 @@ exports.decorateHyper = (Hyper, { React }) => {
         componentDidMount() {
             this.interval = setInterval(() => {
                 this.setState({
-                    cwd: cwd,
-                    branch: git.branch,
+                    left_slot: left_slot,
+                    right_slot: right_slot,
                     remote: git.remote,
                     dirty: git.dirty,
                     ahead: git.ahead
@@ -319,6 +338,7 @@ exports.decorateHyper = (Hyper, { React }) => {
     };
 };
 
+/*
 exports.middleware = (store) => (next) => (action) => {
     const uids = store.getState().sessions.sessions;
 
@@ -349,3 +369,4 @@ exports.middleware = (store) => (next) => (action) => {
 
     next(action);
 };
+*/
