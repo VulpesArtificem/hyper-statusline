@@ -3,6 +3,11 @@ const { exec } = require('child_process');
 const color = require('color');
 const afterAll = require('after-all-results');
 const tildify = require('tildify');
+const fs = require('fs');
+
+var log = (msg) => {
+    fs.appendFileSync("C:/Users/bebroder/hyper.debug", msg + "\n");
+}
 
 exports.decorateConfig = (config) => {
     const colorForeground = color(config.foregroundColor || '#fff');
@@ -150,22 +155,10 @@ let git = {
 }
 
 const setCwd = (pid, action) => {
-    if (process.platform == 'win32') {
-        let directoryRegex = /([a-zA-Z]:[^\:\[\]\?\"\<\>\|]+)/mi;
-        if (action && action.data) {
-            let path = directoryRegex.exec(action.data);
-            if(path){
-                cwd = path[0];
-                setGit(cwd);
-            }
-        }
-    } else {
-        exec(`lsof -p ${pid} | awk '$4=="cwd"' | tr -s ' ' | cut -d ' ' -f9-`, (err, stdout) => {
-            cwd = stdout.trim();
-            setGit(cwd);
-        });
-    }
-    
+    fs.readFile('C:/Users/bebroder/.psmeta', (err, data) => {
+        cwd = data.toString();
+        setGit(cwd);
+    });
 };
 
 const isGit = (dir, cb) => {
