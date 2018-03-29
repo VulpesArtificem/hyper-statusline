@@ -1,24 +1,18 @@
 {
-  "name": "hyper-statusline",
+  "name": "bbp-hyper-playground",
   "version": "1.7.6",
-  "description": "Status Line Plugin for Hyper",
+  "description": "Hyperterm playground",
   "main": "index.js",
   "license": "MIT",
-  "repository": "henrikdahl/hyper-statusline",
+  "repository": "benbp/hyper-statusline",
   "author": {
-    "name": "Henrik Dahlheim",
-    "email": "henrik.dahlheim@gmail.com"
+    "name": "Ben",
+    "email": "npm.naccounts@benbp.net"
   },
   "files": [
     "index.js"
   ],
   "keywords": [
-    "hyper",
-    "hyper-theme",
-    "hyperterm",
-    "hyperterm-theme",
-    "hyper-statusline",
-    "statusline"
   ],
   "dependencies": {
     "after-all-results": "^2.0.0",
