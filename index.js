@@ -176,6 +176,7 @@ const startServer = (cls) => {
 
     log('Server listening at 127.0.0.1:7654');
     server.listen(7654, '127.0.0.1');
+    cls.server = server;
 }
 
 const setCwd = (pid, action) => {
@@ -288,11 +289,6 @@ exports.decorateHyper = (Hyper, { React }) => {
                 dirty: 0,
                 ahead: 0
             }
-
-            startServer(this);
-
-            //this.handleCwdClick = this.handleCwdClick.bind(this);
-            //this.handleBranchClick = this.handleBranchClick.bind(this);
         }
 
         /*
@@ -331,55 +327,11 @@ exports.decorateHyper = (Hyper, { React }) => {
         }
 
         componentDidMount() {
-            /*
-            this.interval = setInterval(() => {
-                log ("IL: " + left_slot + " " + "IR: " + right_slot);
-                this.setState({
-                    left_slot: this.left_slot,
-                    right_slot: this.right_slot,
-                    remote: git.remote,
-                    dirty: git.dirty,
-                    ahead: git.ahead
-                });
-            }, 5000);
-            */
+            startServer(this);
         }
 
         componentWillUnmount() {
-            clearInterval(this.interval);
+            this.server.close();
         }
     };
 };
-
-/*
-exports.middleware = (store) => (next) => (action) => {
-    const uids = store.getState().sessions.sessions;
-
-    switch (action.type) {
-        case 'SESSION_SET_XTERM_TITLE':
-            pid = uids[action.uid].pid;
-            break;
-
-        case 'SESSION_ADD':
-            pid = action.pid;
-            setCwd(pid);
-            break;
-
-        case 'SESSION_ADD_DATA':
-            const { data } = action;
-            const enterKey = data.indexOf('\n') > 0;
-
-            if (enterKey) {
-                setCwd(pid, action);
-            }
-            break;
-
-        case 'SESSION_SET_ACTIVE':
-            pid = uids[action.uid].pid;
-            setCwd(pid);
-            break;
-    }
-
-    next(action);
-};
-*/
