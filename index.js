@@ -14,8 +14,10 @@ exports.decorateConfig = (config) => {
     const colorForeground = color(config.foregroundColor || '#fff');
     const colorBackground = color(config.backgroundColor || '#000');
     const colors = {
-        foreground: colorForeground.string(),
-        background: colorBackground.lighten(0.3).string()
+        //foreground: colorForeground.string(),
+        //background: colorBackground.lighten(0.7).string()
+        foreground: color('#fff').string(),
+        background: color('#000').string()
     };
 
     const configColors = Object.assign({
@@ -148,8 +150,6 @@ exports.decorateConfig = (config) => {
 
 let pid;
 let cwd;
-let left_slot;
-let right_slot;
 let git = {
     //branch: '',
     remote: '',
@@ -157,19 +157,26 @@ let git = {
     ahead: 0
 }
 
-var server = net.createServer(function(socket) {
-    socket.on('data', function (data) {
-        var split = data.toString().split(';');
-        left_slot = split[0] || '';
-        right_slot = split[1] || '';
-        log(data.toString() + " " + left_slot + " " + right_slot);
-        //console.log(data.toString());
+const startServer = (cls) => {
+    var server = net.createServer(function(socket) {
+        socket.on('data', function (data) {
+            let split = data.toString().split(';');
+
+            cls.setState({
+                left_slot: split[0] || '',
+                right_slot: split[1] || '',
+                remote: git.remote,
+                dirty: git.dirty,
+                ahead: git.ahead
+            });
+
+            // log("Set state= src: " + data.toString() + " " + cls.state.left_slot + " " + cls.state.right_slot);
+        });
     });
-});
 
-log('Server listening at 127.0.0.1:7654');
-server.listen(7654, '127.0.0.1');
-
+    log('Server listening at 127.0.0.1:7654');
+    server.listen(7654, '127.0.0.1');
+}
 
 const setCwd = (pid, action) => {
     fs.readFile('C:/Users/bebroder/.psmeta', (err, data) => {
@@ -282,6 +289,8 @@ exports.decorateHyper = (Hyper, { React }) => {
                 ahead: 0
             }
 
+            startServer(this);
+
             //this.handleCwdClick = this.handleCwdClick.bind(this);
             //this.handleBranchClick = this.handleBranchClick.bind(this);
         }
@@ -297,6 +306,7 @@ exports.decorateHyper = (Hyper, { React }) => {
         */
 
         render() {
+            // log("SL: " + this.state.left_slot + " " + "SR: " + this.state.right_slot);
             const { customChildren } = this.props
             const existingChildren = customChildren ? customChildren instanceof Array ? customChildren : [customChildren] : [];
 
@@ -321,15 +331,18 @@ exports.decorateHyper = (Hyper, { React }) => {
         }
 
         componentDidMount() {
+            /*
             this.interval = setInterval(() => {
+                log ("IL: " + left_slot + " " + "IR: " + right_slot);
                 this.setState({
-                    left_slot: left_slot,
-                    right_slot: right_slot,
+                    left_slot: this.left_slot,
+                    right_slot: this.right_slot,
                     remote: git.remote,
                     dirty: git.dirty,
                     ahead: git.ahead
                 });
-            }, 100);
+            }, 5000);
+            */
         }
 
         componentWillUnmount() {
