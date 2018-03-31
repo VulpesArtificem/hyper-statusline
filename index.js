@@ -5,7 +5,7 @@ const tildify = require('tildify');
 const fs = require('fs');
 const net = require('net');
 
-var log = (msg) => {
+const log = (msg) => {
     fs.appendFileSync("C:/Users/bebroder/hyper.debug", msg + "\n");
 }
 
@@ -163,7 +163,7 @@ const startServer = (cls) => {
         });
     });
 
-    log('Server listening at 127.0.0.1:7654');
+    // log('Server listening at 127.0.0.1:7654');
     server.listen(7654, '127.0.0.1');
     cls.server = server;
 }
@@ -184,15 +184,27 @@ exports.decorateHyper = (Hyper, { React }) => {
         }
 
         handleCwdClick(event) {
-            log("Cwd");
-            log(Object.keys(this).join(";"));
             shell.openExternal('file://'+this.state.cwd);
         }
 
         handleBranchClick(event) {
-            log("Branch");
-            log(Object.keys(this).join(";"));
-            shell.openExternal(this.state.remote);
+            let pullRequestUri = this.state.remote;
+
+            if (this.state.remote.indexOf("visualstudio.com") > -1) {
+                pullRequestUri =
+                    this.state.remote +
+                    "/pullrequestcreate?sourceRef=" +
+                    this.state.branch +
+                    "&targetRef=master";
+            } else if (this.state.remote.indexOf("github.com") > -1) {
+                pullRequestUri =
+                    this.state.remote +
+                    "/compare/" +
+                    this.state.branch +
+                    "...master?expand=1";
+            }
+
+            shell.openExternal(pullRequestUri);
         }
 
         render() {
