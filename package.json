@@ -1,6 +1,6 @@
 {
   "name": "bbp-hyper-playground",
-  "version": "1.7.11",
+  "version": "1.7.12",
   "description": "Hyperterm playground",
   "main": "index.js",
   "license": "MIT",
