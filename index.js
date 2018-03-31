@@ -117,6 +117,14 @@ exports.decorateConfig = (config) => {
                 -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDE0IDEyIj48cGF0aCBmaWxsPSIjMDAwMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMywyIEw3LDIgTDcsMSBDNywwLjM0IDYuNjksMCA2LDAgTDEsMCBDMC40NSwwIDAsMC40NSAwLDEgTDAsMTEgQzAsMTEuNTUgMC40NSwxMiAxLDEyIEwxMywxMiBDMTMuNTUsMTIgMTQsMTEuNTUgMTQsMTEgTDE0LDMgQzE0LDIuNDUgMTMuNTUsMiAxMywyIEwxMywyIFogTTYsMiBMMSwyIEwxLDEgTDYsMSBMNiwyIEw2LDIgWiIvPjwvc3ZnPg==');
                 -webkit-mask-size: 14px 12px;
             }
+            .footer_footer .item_pokemon {
+                padding-left: 100px;
+                margin-left: 100px;
+            }
+            .footer_footer .item_pokemon:before {
+                content: "Pokemon: ${config.pokemon}";
+                color: ${configColors.lightWhite};
+            }
             .footer_footer .item_branch {
                 padding-left: 16px;
             }
@@ -229,7 +237,13 @@ exports.decorateHyper = (Hyper, { React }) => {
                                         onClick: this.handleCwdClick.bind(this),
                                         hidden: !this.state.cwd
                                     },
-                                    this.state.cwd ? tildify(String(this.state.cwd)) : '')
+                                    this.state.cwd ? tildify(String(this.state.cwd)) : ''),
+                                React.createElement(
+                                    'div',
+                                    {
+                                        className: 'component_item item_pokemon',
+                                        title: "pokemon"
+                                    })
                             )
                         ),
                         React.createElement('div', { className: 'footer_group' },
