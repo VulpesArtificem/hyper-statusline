@@ -19,6 +19,10 @@ exports.decorateConfig = (config) => {
     };
     */
 
+    if (config.pokemon) {
+        fs.writeFileSync("C:/Users/bebroder/hyper.pokemon", config.pokemon);
+    }
+
     const configColors = {
         black: '#000000',
         red: '#ff0000',
@@ -242,7 +246,7 @@ exports.decorateHyper = (Hyper, { React }) => {
                                 React.createElement(
                                     'div', {
                                         className: 'component_item item_icon item_number item_dirty',
-                                        title: `${this.state.dirty} dirty ${this.state.dirty > 1 ? 'files' : 'file'}`, 
+                                        title: `${this.state.dirty} dirty ${this.state.dirty > 1 ? 'files' : 'file'}`,
                                         hidden: !this.state.dirty
                                     },
                                     this.state.dirty),
